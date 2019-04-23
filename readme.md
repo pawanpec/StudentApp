@@ -26,7 +26,7 @@ MySQL is required to run the API service. You'll need to initialize an
 empty database:
 
 ```sql
-create database kickstart;
+create database student_app;
 ```
 
 All tables and data will be loaded when you start the service.
