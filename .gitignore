@@ -95,5 +95,7 @@ buildNumber.properties
 .env.local
 *.iml
 .mvn/wrapper/maven-wrapper.jar
+nohup.out
+pid.file
 
 

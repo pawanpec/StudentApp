@@ -1,27 +1,26 @@
 package com.lp.school.api.jwt.config;
 
-import com.lp.school.api.config.AppProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Function;
+
+import static com.lp.school.api.constant.Constants.ACCESS_TOKEN_VALIDITY_SECONDS;
+import static com.lp.school.api.constant.Constants.SIGNING_KEY;
+
 
 @Component
 public class JwtTokenUtil implements Serializable {
 
-    @Autowired
-    private AppProperties appProperties;
-
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
-    }
-    public String getEmailFromToken(String token) {
-        return getClaimFromToken(token, Claims::getAudience);
     }
 
     public Date getExpirationDateFromToken(String token) {
@@ -35,7 +34,7 @@ public class JwtTokenUtil implements Serializable {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(appProperties.getAuth().getTokenSecret())
+                .setSigningKey(SIGNING_KEY)
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -43,6 +42,24 @@ public class JwtTokenUtil implements Serializable {
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
+    }
+
+    public String generateToken(String userName) {
+        return doGenerateToken(userName);
+    }
+
+    private String doGenerateToken(String subject) {
+
+        Claims claims = Jwts.claims().setSubject(subject);
+        claims.put("scopes", Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuer("http://devglan.com")
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS*1000))
+                .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+                .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {

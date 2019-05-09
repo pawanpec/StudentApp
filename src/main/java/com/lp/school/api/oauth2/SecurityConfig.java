@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,9 +17,15 @@ import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.Resource;
@@ -50,7 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/v2/api-docs",
             "/webjars/**",
             "/health-check",
-            "/api/school/**"
+            "/google-login",
+            "/api/school/**",
+            "/token/*"
     };
 
 
@@ -59,10 +68,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers(AUTH_WHITELIST)
                 .permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
-                .oauth2Login();
-                http.addFilterBefore(authenticationTokenFilterBean(),
-                    UsernamePasswordAuthenticationFilter.class).cors().and().csrf().disable();
+                .oauth2Login()
+                .loginPage("/google-login")
+                .defaultSuccessUrl("/token/generate-token")
+                .failureUrl("/login-failure");
+        http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
+    }
+    @Bean
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> authorizationRequestRepository() {
+        return new HttpSessionOAuth2AuthorizationRequestRepository();
+    }
+
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+        return accessTokenResponseClient;
     }
     @Bean
     public OAuth2AuthorizedClientService authorizedClientService() {
@@ -80,20 +103,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         return new InMemoryClientRegistrationRepository(registrations);
     }
+    private static String CLIENT_PROPERTY_KEY = "spring.security.oauth2.client.registration.";
 
     private ClientRegistration getRegistration(String client) {
-        String clientId = env.getProperty(Constants.GOOGLE_CLIENT_ID);
+        String clientId = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-id");
 
         if (clientId == null) {
-            logger.error("Google clientId is {}",clientId);
             return null;
         }
 
-        String clientSecret = env.getProperty(Constants.GOOGLE_CLIENT_ID_SECRET);
-
+        String clientSecret = env.getProperty(CLIENT_PROPERTY_KEY + client + ".client-secret");
         if (client.equals("google")) {
             return CommonOAuth2Provider.GOOGLE.getBuilder(client)
-                    .clientId(clientId).clientSecret(clientSecret).build();
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .build();
+        }
+        if (client.equals("facebook")) {
+            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .build();
         }
         return null;
     }

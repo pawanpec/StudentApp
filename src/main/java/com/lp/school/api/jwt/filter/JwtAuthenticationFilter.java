@@ -41,7 +41,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authToken = header.replace(TOKEN_PREFIX,"");
             try {
                 username = jwtTokenUtil.getUsernameFromToken(authToken);
-                email = jwtTokenUtil.getEmailFromToken(authToken);
 
             } catch (IllegalArgumentException e) {
                 logger.error("an error occured during getting username from token", e);
