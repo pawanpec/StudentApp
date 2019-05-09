@@ -7,5 +7,5 @@ public class Constants {
   public static String GOOGLE_CLIENT_ID = "OAUTH_GOOGLE_CLIENT_ID";
   public static String GOOGLE_CLIENT_ID_SECRET = "OAUTH_GOOGLE_CLIENT_SECRET";
   public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 5*60*60;
-  public static final String SIGNING_KEY = "digital_remedy";
+  public static final String SIGNING_KEY = "student_app";
 }

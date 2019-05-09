@@ -4,6 +4,7 @@ import com.lp.school.api.domain.ApiResponse;
 import com.lp.school.api.domain.AuthToken;
 import com.lp.school.api.jwt.config.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,6 +29,9 @@ public class AuthenticationController {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private OAuth2AuthorizedClientService authorizedClientService;
+
+    @Value("#{'${studentapp.valid.admin.emails}'.split(',')}")
+    private List<String> validAdminEmails;
 
     @GetMapping("/generate-token")
     public ApiResponse<AuthToken> getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
@@ -50,10 +55,21 @@ public class AuthenticationController {
             ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             userAttributes = response.getBody();
             userName=(String) userAttributes.get("name");
-            model.addAttribute("name",userName );
+            String email=(String) userAttributes.get("email");
+
+           if(!validAdminEmails.contains(email)){
+               return new ApiResponse<>(401, "success",new AuthToken(null, userName));
+           }
+           model.addAttribute("name",userName );
         }
         final String token = jwtTokenUtil.generateToken((String)userAttributes.get("name"));
         return new ApiResponse<>(200, "success",new AuthToken(token, userName));
     }
+    public List<String> getValidAdminEmails() {
+        return validAdminEmails;
+    }
 
+    public void setValidAdminEmails(List<String> validAdminEmails) {
+        this.validAdminEmails = validAdminEmails;
+    }
 }
