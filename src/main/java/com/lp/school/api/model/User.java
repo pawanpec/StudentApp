@@ -6,9 +6,33 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 public class User {
+
   private Long id;
 
+  private Long schoolId;
+
+  Long createdTime;
+  Long updatedTime;
+  String createdBy;
+  String updatedBy;
+
+  private Object data;
+
   private String name;
+
+  private String fatherName;
+
+  private String motherName;
+
+  private String fatherMobileNumber;
+
+  private String motherMobileNumber;
+
+  //Student/Parents/Teacher
+  private String userType;
+  //lkg UKG
+  private String classType;
+
 
   @Email
   private String email;
@@ -24,6 +48,94 @@ public class User {
   private AuthProvider provider;
 
   private String providerId;
+
+  public Long getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(Long createdTime) {
+    this.createdTime = createdTime;
+  }
+
+  public Long getUpdatedTime() {
+    return updatedTime;
+  }
+
+  public void setUpdatedTime(Long updatedTime) {
+    this.updatedTime = updatedTime;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getUpdatedBy() {
+    return updatedBy;
+  }
+
+  public void setUpdatedBy(String updatedBy) {
+    this.updatedBy = updatedBy;
+  }
+
+  public String getFatherName() {
+    return fatherName;
+  }
+
+  public void setFatherName(String fatherName) {
+    this.fatherName = fatherName;
+  }
+
+  public String getMotherName() {
+    return motherName;
+  }
+
+  public void setMotherName(String motherName) {
+    this.motherName = motherName;
+  }
+
+  public String getFatherMobileNumber() {
+    return fatherMobileNumber;
+  }
+
+  public void setFatherMobileNumber(String fatherMobileNumber) {
+    this.fatherMobileNumber = fatherMobileNumber;
+  }
+
+  public String getMotherMobileNumber() {
+    return motherMobileNumber;
+  }
+
+  public void setMotherMobileNumber(String motherMobileNumber) {
+    this.motherMobileNumber = motherMobileNumber;
+  }
+
+  public String getUserType() {
+    return userType;
+  }
+
+  public void setUserType(String userType) {
+    this.userType = userType;
+  }
+
+  public String getClassType() {
+    return classType;
+  }
+
+  public void setClassType(String classType) {
+    this.classType = classType;
+  }
+
+  public Long getSchoolId() {
+    return schoolId;
+  }
+
+  public void setSchoolId(Long schoolId) {
+    this.schoolId = schoolId;
+  }
 
   public Long getId() {
     return id;
@@ -87,5 +199,13 @@ public class User {
 
   public void setProviderId(String providerId) {
     this.providerId = providerId;
+  }
+
+  public Object getData() {
+    return data;
+  }
+
+  public void setData(Object data) {
+    this.data = data;
   }
 }

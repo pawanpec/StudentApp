@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Resource(name = "userService")
-    private UserDetailsService userDetailsService;
     private final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -58,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             "/health-check",
             "/google-login",
-            "/api/school/**",
+            "/api/**",
             "/token/*"
     };
 

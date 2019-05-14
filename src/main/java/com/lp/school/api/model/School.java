@@ -4,21 +4,57 @@ package com.lp.school.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class School {
-    String _id;
+    Long id;
     String schoolName;
-    String schoolId;
     Object location;
     String adminName;
     String contactNumber;
     String emailId;
-    Object data;
+    Long createdTime;
+    Long updatedTime;
+    String createdBy;
+    String updatedBy;
 
-    public String get_id() {
-        return _id;
+    private Object data;
+
+    public Long getCreatedTime() {
+        return createdTime;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setCreatedTime(Long createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Long getUpdatedTime() {
+        return updatedTime;
+    }
+
+    public void setUpdatedTime(Long updatedTime) {
+        this.updatedTime = updatedTime;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSchoolName() {
@@ -27,14 +63,6 @@ public class School {
 
     public void setSchoolName(String schoolName) {
         this.schoolName = schoolName;
-    }
-
-    public String getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(String schoolId) {
-        this.schoolId = schoolId;
     }
 
     public Object getLocation() {
