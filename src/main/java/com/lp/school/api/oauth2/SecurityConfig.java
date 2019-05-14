@@ -77,7 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/token/generate-token")
                 .failureUrl("/login-failure");
         http.addFilterBefore(authenticationTokenFilterBean(),
-                UsernamePasswordAuthenticationFilter.class).cors().and().csrf().disable();
+                UsernamePasswordAuthenticationFilter.class);
+        http.cors().and().csrf().disable();
     }
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
