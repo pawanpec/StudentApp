@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.function.Function;
 
-import static com.lp.school.api.constant.Constants.ACCESS_TOKEN_VALIDITY_SECONDS;
-import static com.lp.school.api.constant.Constants.SIGNING_KEY;
+import static com.lp.school.api.constant.Constants.*;
 
 
 @Component
@@ -44,18 +44,19 @@ public class JwtTokenUtil implements Serializable {
         return expiration.before(new Date());
     }
 
-    public String generateToken(String userName) {
-        return doGenerateToken(userName);
+    public String generateToken(Map userData) {
+        return doGenerateToken(userData);
     }
 
-    private String doGenerateToken(String subject) {
-
-        Claims claims = Jwts.claims().setSubject(subject);
+    private String doGenerateToken(Map userData) {
+        String userName=(String) userData.get("name");
+        String email=(String) userData.get("email");
+        Claims claims = Jwts.claims().setSubject(userName).setAudience(email);
         claims.put("scopes", Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setIssuer("http://devglan.com")
+                .setIssuer(ISSUER)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS*1000))
                 .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)

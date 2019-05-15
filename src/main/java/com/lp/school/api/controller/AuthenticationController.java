@@ -5,20 +5,20 @@ import com.lp.school.api.domain.AuthToken;
 import com.lp.school.api.jwt.config.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -34,9 +34,14 @@ public class AuthenticationController {
     private List<String> validAdminEmails;
 
     @GetMapping("/generate-token")
-    public ApiResponse<AuthToken> getLoginInfo(Model model, OAuth2AuthenticationToken authentication) {
+    public ApiResponse<AuthToken> getLoginInfo(HttpServletResponse res, Model model,
+                                               OAuth2AuthenticationToken authentication, @CookieValue(value = "token", required = false) Cookie cookieToken) {
 
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
+
+        if (client == null) {
+            return new ApiResponse<AuthToken>(HttpStatus.UNAUTHORIZED.value(), "unauthorized", new AuthToken());
+        }
 
         String userInfoEndpointUri = client.getClientRegistration()
                 .getProviderDetails()
@@ -62,7 +67,18 @@ public class AuthenticationController {
            }
            model.addAttribute("name",userName );
         }
-        final String token = jwtTokenUtil.generateToken((String)userAttributes.get("name"));
+        String token = null;
+        if (cookieToken != null) {
+            token = cookieToken.getValue();
+        }
+        if (StringUtils.isEmpty(token)) {
+            token = jwtTokenUtil.generateToken(userAttributes);
+            cookieToken = new Cookie("token", token);
+//          cookieToken.setHttpOnly(true); // cant' read from JS with this
+            // cookieToken.setSecure(true); // FIXME enable on ssl
+            cookieToken.setPath("/");
+            res.addCookie(cookieToken);
+        }
         return new ApiResponse<>(200, "success",new AuthToken(token, userName));
     }
     public List<String> getValidAdminEmails() {

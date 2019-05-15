@@ -17,7 +17,7 @@ public class LoginController {
 
     @GetMapping("/google-login")
     public String getLoginPage(Model model) {
-        model.addAttribute("url", "oauth2/authorization/google");
+        model.addAttribute("url", "http://ec2-13-234-50-124.ap-south-1.compute.amazonaws.com:7070/oauth2/authorization/google");
 
         return "google-login";
     }
