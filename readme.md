@@ -8,7 +8,7 @@
 ## Building
 
 ```sh
-mvn clean build
+mvn clean install
 ```
 
 ## Running
