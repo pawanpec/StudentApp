@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +34,11 @@ public class AuthenticationController {
     @Value("#{'${studentapp.valid.admin.emails}'.split(',')}")
     private List<String> validAdminEmails;
 
+    @Value("${studentapp.redirect.url}")
+    private String redirectURL;
+
     @GetMapping("/generate-token")
-    public ApiResponse<AuthToken> getLoginInfo(HttpServletResponse res, Model model,
+    public ApiResponse<AuthToken> getLoginInfo(HttpServletResponse req,HttpServletResponse res, Model model,
                                                OAuth2AuthenticationToken authentication, @CookieValue(value = "token", required = false) Cookie cookieToken) {
 
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
@@ -74,10 +78,13 @@ public class AuthenticationController {
         if (StringUtils.isEmpty(token)) {
             token = jwtTokenUtil.generateToken(userAttributes);
             cookieToken = new Cookie("token", token);
-//          cookieToken.setHttpOnly(true); // cant' read from JS with this
-            // cookieToken.setSecure(true); // FIXME enable on ssl
             cookieToken.setPath("/");
             res.addCookie(cookieToken);
+        }
+        try {
+            res.sendRedirect(redirectURL);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return new ApiResponse<>(200, "success",new AuthToken(token, userName));
     }
