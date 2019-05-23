@@ -5,16 +5,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-public class User {
+public class User extends Auditable<String> {
 
   private Long id;
 
   private Long schoolId;
-
-  Long createdTime;
-  Long updatedTime;
-  String createdBy;
-  String updatedBy;
 
   private Object data;
 
@@ -28,58 +23,22 @@ public class User {
 
   private String motherMobileNumber;
 
-  //Student/Parents/Teacher
+  // Student/Parents/Teacher
   private String userType;
-  //lkg UKG
+  // lkg UKG
   private String classType;
 
-
-  @Email
-  private String email;
+  @Email private String email;
 
   private String imageUrl;
 
   private Boolean emailVerified = false;
 
-  @JsonIgnore
-  private String password;
+  @JsonIgnore private String password;
 
-  @NotNull
-  private AuthProvider provider;
+  @NotNull private AuthProvider provider;
 
   private String providerId;
-
-  public Long getCreatedTime() {
-    return createdTime;
-  }
-
-  public void setCreatedTime(Long createdTime) {
-    this.createdTime = createdTime;
-  }
-
-  public Long getUpdatedTime() {
-    return updatedTime;
-  }
-
-  public void setUpdatedTime(Long updatedTime) {
-    this.updatedTime = updatedTime;
-  }
-
-  public String getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(String createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getUpdatedBy() {
-    return updatedBy;
-  }
-
-  public void setUpdatedBy(String updatedBy) {
-    this.updatedBy = updatedBy;
-  }
 
   public String getFatherName() {
     return fatherName;

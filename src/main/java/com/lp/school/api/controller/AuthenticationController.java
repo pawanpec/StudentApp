@@ -3,6 +3,8 @@ package com.lp.school.api.controller;
 import com.lp.school.api.domain.ApiResponse;
 import com.lp.school.api.domain.AuthToken;
 import com.lp.school.api.jwt.config.JwtTokenUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -26,6 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/token")
 public class AuthenticationController {
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -44,7 +47,7 @@ public class AuthenticationController {
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(authentication.getAuthorizedClientRegistrationId(), authentication.getName());
 
         if (client == null) {
-            return new ApiResponse<AuthToken>(HttpStatus.UNAUTHORIZED.value(), "unauthorized", new AuthToken());
+            return new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), "unauthorized", new AuthToken());
         }
 
         String userInfoEndpointUri = client.getClientRegistration()
@@ -59,7 +62,7 @@ public class AuthenticationController {
             headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + client.getAccessToken()
                     .getTokenValue());
 
-            HttpEntity<String> entity = new HttpEntity<String>("", headers);
+            HttpEntity<String> entity = new HttpEntity<>("", headers);
 
             ResponseEntity<Map> response = restTemplate.exchange(userInfoEndpointUri, HttpMethod.GET, entity, Map.class);
             userAttributes = response.getBody();
@@ -79,12 +82,13 @@ public class AuthenticationController {
             token = jwtTokenUtil.generateToken(userAttributes);
             cookieToken = new Cookie("token", token);
             cookieToken.setPath("/");
+            cookieToken.setDomain("schoolspedia.com");
             res.addCookie(cookieToken);
         }
         try {
             res.sendRedirect(redirectURL);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("ERROR {}",e.getMessage());
         }
         return new ApiResponse<>(200, "success",new AuthToken(token, userName));
     }

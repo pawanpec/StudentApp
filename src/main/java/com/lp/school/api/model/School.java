@@ -1,53 +1,16 @@
 package com.lp.school.api.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class School {
+public class School extends Auditable<String>{
     Long id;
     String schoolName;
     Object location;
     String adminName;
     String contactNumber;
     String emailId;
-    Long createdTime;
-    Long updatedTime;
-    String createdBy;
-    String updatedBy;
 
     private Object data;
-
-    public Long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Long createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public Long getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Long updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
 
     public Long getId() {
         return id;
