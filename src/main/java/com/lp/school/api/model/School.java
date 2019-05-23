@@ -1,6 +1,7 @@
 package com.lp.school.api.model;
 
 
+import org.springframework.data.mongodb.core.mapping.Document;
 
 public class School extends Auditable<String>{
     Long id;
