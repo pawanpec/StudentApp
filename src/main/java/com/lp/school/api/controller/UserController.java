@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping(path = {"/{id}"})
-    public User findById(@PathVariable String id) {
+    public User findById(@PathVariable Long id) {
         logger.info("fetching data for {}", id);
         Optional<User> user=userRepository.findById(id);
         if(user.isPresent())
@@ -48,5 +48,11 @@ public class UserController {
     public User update(@RequestBody User user) {
         return userRepository.save(user);
     }
+
+    @DeleteMapping(path = {"/{id}"})
+    public void delete(@PathVariable Long id) {
+        userRepository.deleteById(id);
+    }
+
 
 }

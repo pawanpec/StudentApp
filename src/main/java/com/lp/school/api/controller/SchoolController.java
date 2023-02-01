@@ -2,6 +2,8 @@ package com.lp.school.api.controller;
 
 import com.lp.school.api.dao.SchoolRepository;
 import com.lp.school.api.model.School;
+import com.lp.school.api.model.User;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +31,21 @@ public class SchoolController {
     }
 
     @GetMapping(path = {"/{id}"})
-    public School findById(@PathVariable String id) {
+    public School findById(@PathVariable Long id) {
         logger.info("fetching data for {}", id);
-        return schoolRepository.findById(id).get();
+        Optional<School> school=schoolRepository.findById(id);
+        if(school.isPresent())
+            return school.get();
+        return null;
     }
     @PutMapping
     public School update(@RequestBody School school) {
         return schoolRepository.save(school);
+    }
+
+    @DeleteMapping(path = {"/{id}"})
+    public void delete(@PathVariable Long id) {
+        schoolRepository.deleteById(id);
     }
 
 }

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import org.springframework.data.annotation.Id;
 
 public class User extends Auditable<String> {
 
+  @Id
   private Long id;
 
   private Long schoolId;

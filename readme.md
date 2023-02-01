@@ -20,12 +20,12 @@ nohup mvn spring-boot:run &
 ## Test API
 
 ```sh
-http://localhost:7080/health-check
+http://localhost:7070/health-check
 
 ```
 ##Swagger Documentation URL
 ```bash
-http://localhost:7080/swagger-ui.html
+http://localhost:7070/swagger-ui.html
 ```
 
 ## Command to generate current Date time
