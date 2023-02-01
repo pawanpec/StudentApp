@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v2
       - name: Setup GCP Service Account
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@main
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@main
         with:
           version: 'latest'
           service_account_email: ${{ secrets.GCP_EMAIL }}
