@@ -1,4 +1,4 @@
-name: Build and Publish Docker Image and Deploy to Cloud Run
+name: Build and Publish Docker.master Image and Deploy to Cloud Run
 
 on:
   push:
@@ -30,13 +30,14 @@ jobs:
           export_default_credentials: true
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
-      - name: Configure Docker
+      - name: Configure Docker.master
         run: |
           gcloud auth configure-docker
 
       - name: Build
         run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/studentapp:latest .
+          docker build -t StudentApp .
+          docker tag my-spring-boot-app gcr.io/${{ secrets.GCP_PROJECT_ID }}/studentapp:latest
 
       - name: Push
         run: |
