@@ -27,7 +27,8 @@ public class SchoolController {
     }
     @GetMapping(path = {"/"})
     public List<School> getAll() {
-        return schoolRepository.findAll();
+        List<School> schools= schoolRepository.findAll();
+        return schools;
     }
 
     @GetMapping(path = {"/{id}"})

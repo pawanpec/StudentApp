@@ -82,7 +82,6 @@ public class AuthenticationController {
             token = jwtTokenUtil.generateToken(userAttributes);
             cookieToken = new Cookie("token", token);
             cookieToken.setPath("/");
-            cookieToken.setDomain("schoolspedia.com");
             res.addCookie(cookieToken);
         }
         try {
