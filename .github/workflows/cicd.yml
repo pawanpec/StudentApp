@@ -1,8 +1,8 @@
-name: Build and Publish Docker.master Image and Deploy to Cloud Run
+name: Build and Publish Docker Image and Deploy to Cloud Run
 
 on:
   push:
-    branches: [ cicd ]
+    branches: [ master ]
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
           export_default_credentials: true
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
-      - name: Configure Docker.master
+      - name: Configure Docker
         run: |
           gcloud auth configure-docker
 
