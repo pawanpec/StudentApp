@@ -2,7 +2,7 @@ name: Build and Publish Dockerfile Image and Deploy to Cloud Run
 
 on:
   push:
-    branches: [ cicd ]
+    branches: [ master ]
 
 jobs:
   build:
